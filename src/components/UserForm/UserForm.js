@@ -1,9 +1,11 @@
 import style from "./UserForm.module.css";
 import { useState } from "react";
+import ErrorModal from './../UI/ErrorModal'
 
 const UserForm = props => {
 	const [username, setUsername] = useState("");
 	const [age, setAge] = useState("");
+	const [error, setError] = useState()
 
 	const nameHandler = (event) => {
 		setUsername(event.target.value);
@@ -17,17 +19,26 @@ const UserForm = props => {
 		event.preventDefault();
         
         if(username.length === 0){
-            alert('Campo de usuário Necessário')
+            setError({
+				title: 'Invalid input',
+				message: 'Please enter a valid name'
+			})
             return
         }
 
         if(age.length === 0){
-            alert('Campo de idade Necessário')
+            setError({
+				title: 'Invalid input',
+				message: 'Please enter a valid age'
+			})
             return
         }
 
         if(age < 0){
-            alert('Digite uma idade válida')
+            setError({
+				title: 'Invalid input',
+				message: 'Please enter a valid age'
+			})
             return
         }
 
@@ -39,8 +50,14 @@ const UserForm = props => {
 		props.newUser(newUser)
 	};
 
+	const errorHandler = props =>{
+		setError()
+	}
+
 	return (
-		<form onSubmit={submitHandle} className={style.form}>
+		<div>
+			{error &&<ErrorModal title={error.title} message={error.message} onConfirm={errorHandler}/>}
+			<form onSubmit={submitHandle} className={style.form}>
 			<label>Username: </label>
 			<input
 				onChange={nameHandler}
@@ -57,6 +74,7 @@ const UserForm = props => {
 			/>
 			<button type="submit">Add User</button>
 		</form>
+		</div>
 	);
 };
 
